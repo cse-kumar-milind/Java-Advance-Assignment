@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Customer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f0f0f;
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: #1a1a2e;
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid #e74c3c;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.5);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+            color: #ffffff;
+        }
+
+        header a {
+            color: #aaa;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        header a:hover { color: #e74c3c; }
+
+        .container {
+            max-width: 580px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background-color: #1e1e1e;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            overflow: hidden;
+            border: 1px solid #2a2a2a;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+            padding: 22px 28px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e74c3c;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-header span { font-size: 1.4rem; }
+
+        .card-body { padding: 28px; }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #aaaaaa;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background-color: #2a2a2a;
+            border: 1px solid #3a3a3a;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            color: #e0e0e0;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #555;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #e74c3c;
+            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.15);
+            background-color: #2f2f2f;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            height: 90px;
+        }
+
+        /* input number arrow hide */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid #2a2a2a;
+            margin: 24px 0;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .btn-submit {
+            flex: 1;
+            padding: 13px;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s;
+            letter-spacing: 0.4px;
+        }
+
+        .btn-submit:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-submit:active { transform: translateY(0); }
+
+        .btn-cancel {
+            flex: 1;
+            padding: 13px;
+            background-color: #2a2a2a;
+            color: #aaa;
+            border: 1px solid #3a3a3a;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .btn-cancel:hover {
+            background-color: #333;
+            color: #e0e0e0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 24px;
+            font-size: 0.85rem;
+            color: #444;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>&#128101; Customer Management System</h1>
+        <a th:href="@{/customers}">&#8592; Back to Customers</a>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <span>&#128100;</span>
+                <span th:text="${customer.id != null and customer.id != 0} ? 'Edit Customer' : 'Add New Customer'">
+                    Add New Customer
+                </span>
+            </div>
+            <div class="card-body">
+                <form th:action="@{/saveCustomer}" th:object="${customer}" method="post">
+
+                    <!-- Hidden ID for edit mode -->
+                    <input type="hidden" th:field="*{id}" />
+
+                    <div class="form-group">
+                        <label for="name">&#128100; Full Name</label>
+                        <input type="text" id="name" th:field="*{name}"
+                               placeholder="Enter full name" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">&#9993; Email Address</label>
+                        <input type="email" id="email" th:field="*{email}"
+                               placeholder="Enter email address" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contactNumber">&#128222; Contact Number</label>
+                        <input type="number" id="contactNumber" th:field="*{contactNumber}"
+                               placeholder="Enter contact number" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address">&#128205; Address</label>
+                        <textarea id="address" th:field="*{address}"
+                                  placeholder="Enter full address"></textarea>
+                    </div>
+
+                    <hr class="divider" />
+
+                    <div class="btn-row">
+                        <button type="submit" class="btn-submit">&#10003; Save Customer</button>
+                        <a th:href="@{/customers}" class="btn-cancel">&#10005; Cancel</a>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2024 Customer Management System &mdash; Built with Spring Boot &amp; Thymeleaf
+    </footer>
+
+</body>
+</html>
